@@ -15,25 +15,21 @@
 > 
 > Botify Labs maintains the `.patch` files for more recent versions of OpenVPN than what are available originally
 > in Alex's repository.
+>
+> ### [kpalang/aws-vpn-client-docker](https://github.com/kpalang/aws-vpn-client-docker)
+> Kaur Palang packaged the work of Alex Samorukov and Botify Labs into a Docker container format,
+> making OpenVPN compatible with AWS VPN SAML while providing consistent deployment across environments.
 
 ---
 
-This repository aims to package the work of Alex Samorukov and Botify Labs on making OpenVPN compatible with AWS VPN SAML.
+This fork embeds the OpenVPN profile directly into the Docker image at build time instead of using runtime volume mounts,
+avoiding SELinux context conflicts while maintaining security isolation. Tested on Fedora Asahi Linux.
 
 ## How to use
 
-### Use a prebuilt container
-1. Download your AWS VPN client profile into a directory
-2. Run `docker run --name vpn -d --net host -v /path/to/profile.ovpn:/opt/openvpn/profile.ovpn:ro --device /dev/net/tun:/dev/net/tun --cap-add NET_ADMIN kpalang/aws-vpn:latest`
-   1. Run `docker logs -f vpn` to grab the login link
-   2. After logging in, you can safely exit the log tail with `Ctrl-C`
-3. Enjoy
-
 ### Build the container yourself
 1. Clone this repository
-2. Download your AWS VPN client profile into a directory.
-3. Adjust the mount source (`./profile.ovpn`) in `compose.yml` to read your ovpn profile file (`cvpn-endpoint-*.ovpn`)
-   1. Don't change the mount target (`/opt/openvpn/profile.ovpn`)!
+2. Download your AWS VPN client profile into a directory
+3. Place your AWS VPN client profile (`cvpn-endpoint-*.ovpn`) in the same directory as the Dockerfile, renaming it to `profile.ovpn`
 4. Run `docker compose up --build`
-   1. Also grab the login link from `docker compose logs`
-6. Enjoy
+5. Authenticate to the login link you can find in the log output of this container

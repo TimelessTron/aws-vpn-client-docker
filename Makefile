@@ -31,7 +31,7 @@ start on 1: ## Start the VPN connection
 	$(MAKE) print_url
 
 stop off 0: ## Stop the VPN connection
-	if docker ps | grep -q 'aws-vpn-1'; then \
+	if docker ps | grep -q 'aws-vpn-client-1'; then \
   		docker compose stop; \
 	else \
 		echo "VPN is not running!"; \
@@ -53,6 +53,6 @@ grep_test:
 	docker logs --tail 1 aws-vpn-client
 
 print_url pu: ## Try to print the generated URL
-	@URL=$$(docker logs --tail 100 aws-vpn-1 | grep -Eo 'https?://[^ ]+' | tail -n 1); \
+	@URL=$$(docker logs --tail 100 aws-vpn-client-1 | grep -Eo 'https?://[^ ]+' | tail -n 1); \
 	echo "\n\033[36m$$URL\033[0m\n"; \
 	(xdg-open $$URL 2>/dev/null || open $$URL 2>/dev/null || start $$URL 2>/dev/null) &
